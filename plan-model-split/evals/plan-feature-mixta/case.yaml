@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: plan-feature-mixta
+expected_outcome: |
+  A step-by-step plan where every step ends with a model and effort tag, with a split summary at the top, mixing models according to each step's difficulty and leaving the final verification to the session model.

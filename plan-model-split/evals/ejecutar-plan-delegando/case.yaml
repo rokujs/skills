@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: ejecutar-plan-delegando
+expected_outcome: |
+  A document in which the session does step 2 directly (Sonnet·medium matches), delegates step 1 to an Opus subagent with effort high and step 3 to a Haiku subagent with effort low, with self-contained briefs covering the goal, files, project rules, and the ban on committing and on running npm run teardown; the session does step 4 by reviewing the diffs.
