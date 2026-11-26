@@ -61,18 +61,26 @@ whole result.
 
 ## 2. Implementing the plan
 
-The tags are a commitment, not decoration. Each step runs on the model and effort the
-plan assigned to it:
+The tags are a commitment, not decoration: each step runs on the model the plan
+assigned to it. Delegating has a cost of its own (the subagent starts cold, re-reads
+files and needs a full brief), so delegate only when it buys a different model:
 
-- If the step's model **and** effort both match the current session, do it directly.
-- Otherwise, delegate it to a subagent with the Agent tool, passing `model`
-  (`"haiku"`, `"sonnet"` or `"opus"`) and `effort` (`"low"`, `"medium"` or `"high"`)
-  exactly as the plan says. This includes Opus steps: when the session runs on
-  Sonnet/Haiku, or on Opus with a different effort, send the Opus step to an Opus
-  subagent instead of doing it on the wrong model or effort.
-- One subagent per step, or per group of consecutive steps with the same model and
-  effort. Steps that touch different files can run in parallel; steps that depend on
-  each other's output run in order.
+- If the step's **model** matches the current session's model, do it directly, even
+  when its effort differs. Treat the effort tag as how carefully to work on that step
+  (how much to reason, how many edge cases to check), not as a reason to spawn a
+  subagent on the same model.
+- If the model differs, delegate the step to a subagent with the Agent tool, passing
+  `model` (`"haiku"`, `"sonnet"` or `"opus"`) and `effort` (`"low"`, `"medium"` or
+  `"high"`) exactly as the plan says. This includes Opus steps: when the session runs on
+  Sonnet or Haiku, send the Opus step to an Opus subagent instead of doing it on the
+  wrong model.
+- Batch to keep the overhead down: one subagent per group of consecutive steps on the
+  same model (use the highest effort in the group), not one per step. Steps that touch
+  different files can run in parallel; steps that depend on each other's output run in
+  order.
+- If a step is so small that briefing it would cost more than doing it (a one-line
+  edit, a single string), fold it into the brief of a neighbouring subagent on any
+  model at least as strong, or do it directly and say so in one line.
 
 ### The subagent brief
 
@@ -96,4 +104,4 @@ the diff and the build are.
 
 If delegating a step isn't practical (the Agent tool isn't available, the step is too
 entangled with the current context to brief, etc.), say so before starting that step
-instead of silently doing it on another model or effort.
+instead of silently doing it on another model.
